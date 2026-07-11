@@ -23,9 +23,9 @@ import java.util.Collections;
 @AllArgsConstructor
 @Entity
 @Table(name="\"user\"")
-@JsonInclude(JsonInclude.Include.NON_NULL) // Coment: Excluye campos nulos del JSON
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @SQLDelete(sql = "UPDATE \"user\" SET deleted_at = CURRENT_TIMESTAMP, deleted_by = CURRENT_USER WHERE id=?") // Coment: Define la consulta SQL para el borrado lógico
-@Where(clause = "deleted_at IS NULL") // Coment: Filtra las entidades que no han sido borradas lógicamente
+@Where(clause = "deleted_at IS NULL")
 public class User implements UserDetails {
 
     @Id
@@ -38,12 +38,12 @@ public class User implements UserDetails {
     boolean active;
 
     // Coment: Campos para soft delete
-    @CreationTimestamp // Coment: Anotación para establecer automáticamente la fecha de creación
+    @CreationTimestamp
     @Column(name = "created_at")
     LocalDateTime createdAt;
     @Column(name = "created_by")
     String createdBy;
-    @UpdateTimestamp // Coment: Anotación para actualizar automáticamente la fecha de modificación
+    @UpdateTimestamp
     @Column(name = "updated_at")
     LocalDateTime updatedAt;
     @Column(name = "updated_by")

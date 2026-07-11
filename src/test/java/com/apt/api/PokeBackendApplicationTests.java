@@ -1,4 +1,4 @@
-package com.apt.api; // Coment: Paquete actualizado para coincidir con la ruta del archivo
+package com.apt.api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
