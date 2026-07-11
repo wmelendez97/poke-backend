@@ -22,7 +22,7 @@ public class AuthService {
     public AuthResponse login(AuthRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElse(null);
 
-        if (user == null) {
+        if (user == null || !user.isActive()) { // Coment: Verifica si el usuario existe y está activo
             return null;
         }
 
@@ -49,6 +49,7 @@ public class AuthService {
         res.setId(u.getId());
         res.setUsername(u.getUsername());
         res.setEmail(u.getEmail());
+        res.setName(u.getName()); // Coment: Mapea el nombre del usuario
         return res;
     }
 }
