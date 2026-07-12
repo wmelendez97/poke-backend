@@ -48,11 +48,15 @@ Esto levantará:
     ```bash
     asdf install
     ```
-2.  Construye el proyecto:
+2.  Ejecuta los tests:
+    ```bash
+    mvn test
+    ```
+3.  Construye el proyecto:
     ```bash
     mvn clean package -DskipTests
     ```
-3.  Ejecuta la aplicación:
+4.  Ejecuta la aplicación:
     ```bash
     java -jar target/poke-backend.war
     ```
@@ -65,12 +69,10 @@ El archivo `src/main/resources/application.properties.example` contiene un ejemp
 Ejemplo de `application.properties`:
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/poke_db
-spring.datasource.username=poke
-spring.datasource.password=poke
-spring.datasource.driver-class-name=org.postgresql.Driver
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.datasource.username=user
+spring.datasource.password=pass
+...
+jwt.secret=KeyDefinitionForJWTVeryLongInOrderToProgressWithTheTechnicalTest2026
 ```
 
 ---

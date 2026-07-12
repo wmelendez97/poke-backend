@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SearchHistoryResponse {
     private Long id;
+    private Long userId;
     private String userIdentifier;
     private String searchType;
     private String queryValue;

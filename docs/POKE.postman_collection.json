@@ -380,6 +380,43 @@
           "response": []
         },
         {
+          "name": "search-history?Filters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8080/api/search-history?from=2026-07-01&to=2026-07-12&type=search&q=pika",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "search-history"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-07-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-07-12"
+                },
+                {
+                  "key": "type",
+                  "value": "search"
+                },
+                {
+                  "key": "q",
+                  "value": "pika"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "{userId}/search-history",
           "request": {
             "method": "GET",

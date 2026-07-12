@@ -1,4 +1,4 @@
-package com.apt.api.service;
+package com.poke.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poke.api.dto.response.PokemonResponse;

@@ -1,7 +1,4 @@
--- Password value is a 12 Rounds Hash for 'prueba123'
-INSERT INTO "app_user" (id, username, email, password, name, created_at, created_by, updated_at, updated_by, active)
-VALUES (2, 'secondtest', 'secondtest@yopmail.com', '$2a$12$Soxl/mVuYHU2plATlf31zOqsn2pA9Avw.Or/cub61.fFe9ei3mwKS', 'Second Test', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP, 'system', TRUE);
-
+-- History for user secondtest
 INSERT INTO search_history (id, user_identifier, search_type, query_value, endpoint, success, status_code, error_message, active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
 VALUES
     (1, '2', 'types', 'normal', '/api/types/normal/pokemon', TRUE, 200, NULL, TRUE, '2026-07-12 10:17:19.075254', 'system', '2026-07-12 10:17:19.077442', 'system', NULL, NULL),

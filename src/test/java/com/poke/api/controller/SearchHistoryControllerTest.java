@@ -1,4 +1,4 @@
-package com.apt.api.controller;
+package com.poke.api.controller;
 
 import com.poke.api.controller.SearchHistoryController;
 import com.poke.api.dto.response.SearchHistoryResponse;
@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,7 +32,7 @@ class SearchHistoryControllerTest {
     @Test
     // Verifies the controller returns the global search history.
     void getGlobalSearchHistory_Success() {
-        when(searchHistoryService.getAllSearchHistory()).thenReturn(List.of(SearchHistoryResponse.builder()
+        when(searchHistoryService.getAllSearchHistory(null, null, null, null)).thenReturn(List.of(SearchHistoryResponse.builder()
                 .id(1L)
                 .userIdentifier("1")
                 .searchType("detail")
@@ -43,6 +44,30 @@ class SearchHistoryControllerTest {
                 .build()));
 
         ResponseEntity<?> response = searchHistoryController.getGlobalSearchHistory();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        ApiResponse<?> apiResponse = (ApiResponse<?>) response.getBody();
+        assertNotNull(apiResponse.getData());
+    }
+
+    @Test
+    // Verifies the controller returns the filtered global search history.
+    void getGlobalSearchHistory_WithFilters_Success() {
+        LocalDate from = LocalDate.of(2026, 7, 1);
+        LocalDate to = LocalDate.of(2026, 7, 12);
+        when(searchHistoryService.getAllSearchHistory(from, to, "search", "pika")).thenReturn(List.of(SearchHistoryResponse.builder()
+                .id(2L)
+                .userIdentifier("1")
+                .searchType("search")
+                .queryValue("pika")
+                .endpoint("/api/pokemon/search")
+                .success(true)
+                .statusCode(HttpStatus.OK.value())
+                .createdAt(LocalDateTime.now())
+                .build()));
+
+        ResponseEntity<?> response = searchHistoryController.getGlobalSearchHistory(from, to, "search", "pika");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());

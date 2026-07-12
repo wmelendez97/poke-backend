@@ -27,6 +27,7 @@
 
 ### Search History
 - `GET http://localhost:8080/api/search-history`
+- `GET http://localhost:8080/api/search-history?from=2026-07-01&to=2026-07-12&type=search&q=pika`
 - `GET http://localhost:8080/api/users/{userId}/search-history`
 
 ### Extras

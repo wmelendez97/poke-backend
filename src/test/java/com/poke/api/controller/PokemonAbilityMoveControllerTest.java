@@ -1,11 +1,10 @@
-package com.apt.api.controller;
+package com.poke.api.controller;
 
-import com.poke.api.controller.TypeController;
-import com.poke.api.dto.response.PokemonResponse;
-import com.poke.api.dto.response.TypeSummaryResponse;
+import com.poke.api.controller.PokemonController;
+import com.poke.api.dto.response.AbilityResponse;
+import com.poke.api.dto.response.MoveResponse;
+import com.poke.api.service.PokemonService;
 import com.poke.api.service.SearchHistoryService;
-import com.poke.api.service.TypeService;
-import com.poke.api.util.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TypeControllerTest {
+class PokemonAbilityMoveControllerTest {
 
     @Mock
-    private TypeService typeService;
+    private PokemonService pokemonService;
 
     @Mock
     private SearchHistoryService searchHistoryService;
@@ -34,35 +33,33 @@ class TypeControllerTest {
     private HttpServletRequest request;
 
     @InjectMocks
-    private TypeController typeController;
+    private PokemonController pokemonController;
 
     @Test
-    // Verifies the controller returns the type catalog.
-    void getAllTypes_Success() {
+    // Verifies the controller returns Pokemon abilities.
+    void getPokemonAbilities_Success() {
         when(request.getAttribute("authenticatedUserId")).thenReturn(1L);
         when(request.getAttribute("authenticatedUserUsername")).thenReturn("testuser");
-        when(request.getRequestURI()).thenReturn("/types");
-        when(typeService.getAllTypes("testuser")).thenReturn(List.of(TypeSummaryResponse.builder().id(13L).name("electric").build()));
+        when(request.getRequestURI()).thenReturn("/pokemon/pikachu/abilities");
+        when(pokemonService.getPokemonAbilities("pikachu", "testuser")).thenReturn(List.of(AbilityResponse.builder().id(1L).name("static").build()));
 
-        ResponseEntity<?> response = typeController.getAllTypes();
+        ResponseEntity<?> response = pokemonController.getPokemonAbilities("pikachu");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
     }
 
     @Test
-    // Verifies the controller returns Pokemon by type.
-    void getPokemonByType_Success() {
+    // Verifies the controller returns Pokemon moves.
+    void getPokemonMoves_Success() {
         when(request.getAttribute("authenticatedUserId")).thenReturn(1L);
         when(request.getAttribute("authenticatedUserUsername")).thenReturn("testuser");
-        when(request.getRequestURI()).thenReturn("/types/electric/pokemon");
-        when(typeService.getPokemonByType("electric", "testuser")).thenReturn(List.of(PokemonResponse.builder().id(25L).name("pikachu").build()));
+        when(request.getRequestURI()).thenReturn("/pokemon/pikachu/moves");
+        when(pokemonService.getPokemonMoves("pikachu", "testuser")).thenReturn(List.of(MoveResponse.builder().id(1L).name("mega-punch").build()));
 
-        ResponseEntity<?> response = typeController.getPokemonByType("electric");
+        ResponseEntity<?> response = pokemonController.getPokemonMoves("pikachu");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        ApiResponse<?> apiResponse = (ApiResponse<?>) response.getBody();
-        assertNotNull(apiResponse.getData());
     }
 }

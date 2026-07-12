@@ -40,15 +40,16 @@ public class TypeController {
     @TokenRequired
     @Operation(summary = "List Pokemon types", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<ApiResponse<List<TypeSummaryResponse>>> getAllTypes() {
+        Long userId = getCurrentUserId();
         String userIdentifier = getCurrentUserIdentifier();
         String username = getCurrentUsername();
         String endpoint = request.getRequestURI();
         try {
             List<TypeSummaryResponse> data = typeService.getAllTypes(username);
-            searchHistoryService.saveSearchHistory(userIdentifier, "types", "", endpoint, true, HttpStatus.OK.value(), null);
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "types", "", endpoint, true, HttpStatus.OK.value(), null);
             return ResponseEntity.ok(new ApiResponse<>(data));
         } catch (Exception ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "types", "", endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "types", "", endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
             throw ex;
         }
     }
@@ -58,17 +59,34 @@ public class TypeController {
     @TokenRequired
     @Operation(summary = "List Pokemon by type", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<ApiResponse<List<PokemonResponse>>> getPokemonByType(@PathVariable String name) {
+        Long userId = getCurrentUserId();
         String userIdentifier = getCurrentUserIdentifier();
         String username = getCurrentUsername();
         String endpoint = request.getRequestURI();
         try {
             List<PokemonResponse> data = typeService.getPokemonByType(name, username);
-            searchHistoryService.saveSearchHistory(userIdentifier, "types", name, endpoint, true, HttpStatus.OK.value(), null);
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "types", name, endpoint, true, HttpStatus.OK.value(), null);
             return ResponseEntity.ok(new ApiResponse<>(data));
         } catch (Exception ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "types", name, endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "types", name, endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
             throw ex;
         }
+    }
+
+    // Retrieves the current user's numeric identifier if present.
+    private Long getCurrentUserId() {
+        Object authenticatedUserId = request.getAttribute("authenticatedUserId");
+        if (authenticatedUserId instanceof Number number) {
+            return number.longValue();
+        }
+        if (authenticatedUserId != null) {
+            try {
+                return Long.valueOf(authenticatedUserId.toString());
+            } catch (NumberFormatException ignored) {
+                return null;
+            }
+        }
+        return null;
     }
 
     // Reads the current user identifier from the request context.

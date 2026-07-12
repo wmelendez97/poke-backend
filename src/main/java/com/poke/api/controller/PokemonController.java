@@ -54,6 +54,7 @@ public class PokemonController {
     public ResponseEntity<ApiResponse<PokemonPageResponse>> getPokemonPage(
             @RequestParam(defaultValue = "20") @Min(1) int limit,
             @RequestParam(defaultValue = "0") @Min(0) int offset) {
+        Long userId = getCurrentUserId();
         String userIdentifier = getCurrentUserIdentifier();
         String username = getCurrentUsername();
         String endpoint = request.getRequestURI();
@@ -61,20 +62,20 @@ public class PokemonController {
 
         try {
             PokemonPageResponse data = pokemonService.getPokemonPage(limit, offset);
-            searchHistoryService.saveSearchHistory(userIdentifier, "pagination", queryValue, endpoint, true, HttpStatus.OK.value(), null);
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "pagination", queryValue, endpoint, true, HttpStatus.OK.value(), null);
             return ResponseEntity.ok(new ApiResponse<>(data));
         } catch (ResourceAccessException ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "pagination", queryValue, endpoint, false, HttpStatus.GATEWAY_TIMEOUT.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "pagination", queryValue, endpoint, false, HttpStatus.GATEWAY_TIMEOUT.value(), ex.getMessage());
             return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT)
                     .body(new ApiResponse<>(ApiMessages.ERROR_EXTERNAL_SERVICE_TIMEOUT.getMessage(),
                             List.of(ApiError.ErrorCodes.EXTERNAL_SERVICE_TIMEOUT), HttpStatus.GATEWAY_TIMEOUT));
         } catch (RestClientException ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "pagination", queryValue, endpoint, false, HttpStatus.BAD_GATEWAY.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "pagination", queryValue, endpoint, false, HttpStatus.BAD_GATEWAY.value(), ex.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
                     .body(new ApiResponse<>(ApiMessages.ERROR_EXTERNAL_SERVICE.getMessage(),
                             List.of(ApiError.ErrorCodes.EXTERNAL_SERVICE_ERROR), HttpStatus.BAD_GATEWAY));
         } catch (Exception ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "pagination", queryValue, endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "pagination", queryValue, endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
             throw ex;
         }
     }
@@ -84,6 +85,7 @@ public class PokemonController {
     @TokenRequired
     @Operation(summary = "Get Pokemon detail by ID or name", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<ApiResponse<PokemonResponse>> getPokemonByIdOrName(@PathVariable String idOrName) {
+        Long userId = getCurrentUserId();
         String userIdentifier = getCurrentUserIdentifier();
         String username = getCurrentUsername();
         String endpoint = request.getRequestURI();
@@ -91,20 +93,20 @@ public class PokemonController {
 
         try {
             PokemonResponse data = pokemonService.getPokemonByIdOrName(idOrName, username);
-            searchHistoryService.saveSearchHistory(userIdentifier, "detail", queryValue, endpoint, true, HttpStatus.OK.value(), null);
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "detail", queryValue, endpoint, true, HttpStatus.OK.value(), null);
             return ResponseEntity.ok(new ApiResponse<>(data));
         } catch (ResourceAccessException ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "detail", queryValue, endpoint, false, HttpStatus.GATEWAY_TIMEOUT.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "detail", queryValue, endpoint, false, HttpStatus.GATEWAY_TIMEOUT.value(), ex.getMessage());
             return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT)
                     .body(new ApiResponse<>(ApiMessages.ERROR_EXTERNAL_SERVICE_TIMEOUT.getMessage(),
                             List.of(ApiError.ErrorCodes.EXTERNAL_SERVICE_TIMEOUT), HttpStatus.GATEWAY_TIMEOUT));
         } catch (RestClientException ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "detail", queryValue, endpoint, false, HttpStatus.BAD_GATEWAY.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "detail", queryValue, endpoint, false, HttpStatus.BAD_GATEWAY.value(), ex.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
                     .body(new ApiResponse<>(ApiMessages.ERROR_EXTERNAL_SERVICE.getMessage(),
                             List.of(ApiError.ErrorCodes.EXTERNAL_SERVICE_ERROR), HttpStatus.BAD_GATEWAY));
         } catch (Exception ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "detail", queryValue, endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "detail", queryValue, endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
             throw ex;
         }
     }
@@ -114,6 +116,7 @@ public class PokemonController {
     @TokenRequired
     @Operation(summary = "Search Pokemon by exact or partial name", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<ApiResponse<List<PokemonResponse>>> searchPokemonByName(@RequestParam String name) {
+        Long userId = getCurrentUserId();
         String userIdentifier = getCurrentUserIdentifier();
         String username = getCurrentUsername();
         String endpoint = request.getRequestURI();
@@ -121,20 +124,20 @@ public class PokemonController {
 
         try {
             List<PokemonResponse> data = pokemonService.searchPokemonByName(name, username);
-            searchHistoryService.saveSearchHistory(userIdentifier, "search", queryValue, endpoint, true, HttpStatus.OK.value(), null);
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "search", queryValue, endpoint, true, HttpStatus.OK.value(), null);
             return ResponseEntity.ok(new ApiResponse<>(data));
         } catch (ResourceAccessException ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "search", queryValue, endpoint, false, HttpStatus.GATEWAY_TIMEOUT.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "search", queryValue, endpoint, false, HttpStatus.GATEWAY_TIMEOUT.value(), ex.getMessage());
             return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT)
                     .body(new ApiResponse<>(ApiMessages.ERROR_EXTERNAL_SERVICE_TIMEOUT.getMessage(),
                             List.of(ApiError.ErrorCodes.EXTERNAL_SERVICE_TIMEOUT), HttpStatus.GATEWAY_TIMEOUT));
         } catch (RestClientException ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "search", queryValue, endpoint, false, HttpStatus.BAD_GATEWAY.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "search", queryValue, endpoint, false, HttpStatus.BAD_GATEWAY.value(), ex.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
                     .body(new ApiResponse<>(ApiMessages.ERROR_EXTERNAL_SERVICE.getMessage(),
                             List.of(ApiError.ErrorCodes.EXTERNAL_SERVICE_ERROR), HttpStatus.BAD_GATEWAY));
         } catch (Exception ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "search", queryValue, endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "search", queryValue, endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
             throw ex;
         }
     }
@@ -144,25 +147,26 @@ public class PokemonController {
     @TokenRequired
     @Operation(summary = "Get Pokemon abilities", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<ApiResponse<List<AbilityResponse>>> getPokemonAbilities(@PathVariable String idOrName) {
+        Long userId = getCurrentUserId();
         String userIdentifier = getCurrentUserIdentifier();
         String username = getCurrentUsername();
         String endpoint = request.getRequestURI();
         try {
             List<AbilityResponse> data = pokemonService.getPokemonAbilities(idOrName, username);
-            searchHistoryService.saveSearchHistory(userIdentifier, "abilities", idOrName, endpoint, true, HttpStatus.OK.value(), null);
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "abilities", idOrName, endpoint, true, HttpStatus.OK.value(), null);
             return ResponseEntity.ok(new ApiResponse<>(data));
         } catch (ResourceAccessException ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "abilities", idOrName, endpoint, false, HttpStatus.GATEWAY_TIMEOUT.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "abilities", idOrName, endpoint, false, HttpStatus.GATEWAY_TIMEOUT.value(), ex.getMessage());
             return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT)
                     .body(new ApiResponse<>(ApiMessages.ERROR_EXTERNAL_SERVICE_TIMEOUT.getMessage(),
                             List.of(ApiError.ErrorCodes.EXTERNAL_SERVICE_TIMEOUT), HttpStatus.GATEWAY_TIMEOUT));
         } catch (RestClientException ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "abilities", idOrName, endpoint, false, HttpStatus.BAD_GATEWAY.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "abilities", idOrName, endpoint, false, HttpStatus.BAD_GATEWAY.value(), ex.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
                     .body(new ApiResponse<>(ApiMessages.ERROR_EXTERNAL_SERVICE.getMessage(),
                             List.of(ApiError.ErrorCodes.EXTERNAL_SERVICE_ERROR), HttpStatus.BAD_GATEWAY));
         } catch (Exception ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "abilities", idOrName, endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "abilities", idOrName, endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
             throw ex;
         }
     }
@@ -172,27 +176,44 @@ public class PokemonController {
     @TokenRequired
     @Operation(summary = "Get Pokemon moves", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<ApiResponse<List<MoveResponse>>> getPokemonMoves(@PathVariable String idOrName) {
+        Long userId = getCurrentUserId();
         String userIdentifier = getCurrentUserIdentifier();
         String username = getCurrentUsername();
         String endpoint = request.getRequestURI();
         try {
             List<MoveResponse> data = pokemonService.getPokemonMoves(idOrName, username);
-            searchHistoryService.saveSearchHistory(userIdentifier, "moves", idOrName, endpoint, true, HttpStatus.OK.value(), null);
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "moves", idOrName, endpoint, true, HttpStatus.OK.value(), null);
             return ResponseEntity.ok(new ApiResponse<>(data));
         } catch (ResourceAccessException ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "moves", idOrName, endpoint, false, HttpStatus.GATEWAY_TIMEOUT.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "moves", idOrName, endpoint, false, HttpStatus.GATEWAY_TIMEOUT.value(), ex.getMessage());
             return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT)
                     .body(new ApiResponse<>(ApiMessages.ERROR_EXTERNAL_SERVICE_TIMEOUT.getMessage(),
                             List.of(ApiError.ErrorCodes.EXTERNAL_SERVICE_TIMEOUT), HttpStatus.GATEWAY_TIMEOUT));
         } catch (RestClientException ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "moves", idOrName, endpoint, false, HttpStatus.BAD_GATEWAY.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "moves", idOrName, endpoint, false, HttpStatus.BAD_GATEWAY.value(), ex.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
                     .body(new ApiResponse<>(ApiMessages.ERROR_EXTERNAL_SERVICE.getMessage(),
                             List.of(ApiError.ErrorCodes.EXTERNAL_SERVICE_ERROR), HttpStatus.BAD_GATEWAY));
         } catch (Exception ex) {
-            searchHistoryService.saveSearchHistory(userIdentifier, "moves", idOrName, endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+            searchHistoryService.saveSearchHistory(userId, userIdentifier, "moves", idOrName, endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
             throw ex;
         }
+    }
+
+    // Retrieves the current user's numeric identifier if present.
+    private Long getCurrentUserId() {
+        Object authenticatedUserId = request.getAttribute("authenticatedUserId");
+        if (authenticatedUserId instanceof Number number) {
+            return number.longValue();
+        }
+        if (authenticatedUserId != null) {
+            try {
+                return Long.valueOf(authenticatedUserId.toString());
+            } catch (NumberFormatException ignored) {
+                return null;
+            }
+        }
+        return null;
     }
 
     // Retrieves the current user's identifier.
