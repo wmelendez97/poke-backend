@@ -98,4 +98,9 @@ public class PokeApiClient {
                 .map(moveSlot -> adapter.toMoveResponse((PokeApiNamedResource) moveSlot.getMove()))
                 .collect(Collectors.toList());
     }
+
+    // Retrieves the detailed Pokemon payload for reuse across relations.
+    public PokeApiPokemonDetailDto getPokemonDetail(String idOrName) {
+        return pokeApiRestTemplate.getForObject("/pokemon/{idOrName}", PokeApiPokemonDetailDto.class, idOrName);
+    }
 }

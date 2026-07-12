@@ -5,6 +5,10 @@ import com.poke.api.dto.external.PokeApiNamedResource;
 import com.poke.api.dto.external.PokeApiPokemonDto;
 import com.poke.api.dto.response.PokemonResponse;
 import com.poke.api.model.Pokemon;
+import com.poke.api.repository.PokemonAbilityRelRepository;
+import com.poke.api.repository.PokemonAbilityRepository;
+import com.poke.api.repository.PokemonMoveRelRepository;
+import com.poke.api.repository.PokemonMoveRepository;
 import com.poke.api.proxy.client.PokeApiClient;
 import com.poke.api.repository.PokemonRepository;
 import org.junit.jupiter.api.Test;
@@ -31,11 +35,23 @@ class PokemonServiceTest {
     @Mock
     private PokemonRepository pokemonRepository;
 
+    @Mock
+    private PokemonAbilityRepository pokemonAbilityRepository;
+
+    @Mock
+    private PokemonAbilityRelRepository pokemonAbilityRelRepository;
+
+    @Mock
+    private PokemonMoveRepository pokemonMoveRepository;
+
+    @Mock
+    private PokemonMoveRelRepository pokemonMoveRelRepository;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // Builds the service with mocked dependencies.
     private PokemonService createService() {
-        return new PokemonService(pokeApiClient, pokemonRepository, objectMapper);
+        return new PokemonService(pokeApiClient, pokemonRepository, pokemonAbilityRepository, pokemonAbilityRelRepository, pokemonMoveRepository, pokemonMoveRelRepository, objectMapper);
     }
 
     @Test
@@ -74,6 +90,8 @@ class PokemonServiceTest {
                 .baseExperience(112)
                 .imageUrl("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png")
                 .types(List.of("electric"))
+                .abilities(List.of())
+                .stats(List.of())
                 .build();
 
         Pokemon cachedPokemon = Pokemon.builder()

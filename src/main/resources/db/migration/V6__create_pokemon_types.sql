@@ -1,8 +1,10 @@
+-- Catalog of Pokemon types synchronized from PokeAPI.
 CREATE TABLE pokemon_type (
     id BIGINT PRIMARY KEY,
     name VARCHAR(150) NOT NULL UNIQUE
 );
 
+-- Relation between Pokemon and their types.
 CREATE TABLE pokemon_type_rel (
     pokemon_id BIGINT NOT NULL,
     type_id BIGINT NOT NULL,
