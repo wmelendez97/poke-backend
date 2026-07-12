@@ -8,10 +8,12 @@ public class TokenValidationException extends RuntimeException {
 
 	private final ApiResponse<Object> response;
 
+	// Constructor that takes an ApiResponse object.
 	public TokenValidationException(ApiResponse<Object> response) {
 		this.response = response;
 	}
 
+	// Returns the ApiResponse object associated with this exception.
 	public ApiResponse<Object> getResponse() {
 		return response;
 	}

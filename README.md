@@ -64,7 +64,6 @@ El archivo `src/main/resources/application.properties.example` contiene un ejemp
 
 Ejemplo de `application.properties`:
 ```properties
-// Coment: Configuración de la base de datos
 spring.datasource.url=jdbc:postgresql://localhost:5432/poke_db
 spring.datasource.username=poke
 spring.datasource.password=poke
@@ -78,7 +77,8 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 
 ## Endpoints disponibles 🌐
 
-*   **Swagger UI**: `http://localhost:8080/swagger-ui.html`
+*   **Documentación de pruebas y Colección JSON**: `docs/`
+*   **Swagger UI**: `http://localhost:8080/api/swagger-ui/index.html`
 *   **OpenAPI Docs**: `http://localhost:8080/v3/api-docs`
 *   **Actuator**: `http://localhost:8080/actuator`
 

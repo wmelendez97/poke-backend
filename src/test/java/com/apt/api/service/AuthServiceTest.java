@@ -35,6 +35,7 @@ class AuthServiceTest {
     private BCryptPasswordEncoder passwordEncoder;
 
     @BeforeEach
+    // Sets up the test environment before each test method.
     void setUp() {
         passwordEncoder = new BCryptPasswordEncoder();
         User = new User();
@@ -46,6 +47,7 @@ class AuthServiceTest {
     }
 
     @Test
+    // Tests successful user login.
     void login_Success() {
         AuthRequest request = new AuthRequest();
         request.setEmail("test@example.com");
@@ -63,6 +65,7 @@ class AuthServiceTest {
     }
 
     @Test
+    // Tests login with an invalid password.
     void login_InvalidPassword() {
         AuthRequest request = new AuthRequest();
         request.setEmail("test@example.com");
@@ -76,6 +79,7 @@ class AuthServiceTest {
     }
 
     @Test
+    // Tests login when the user is not found.
     void login_UserNotFound() {
         AuthRequest request = new AuthRequest();
         request.setEmail("nonexistent@example.com");
@@ -89,6 +93,7 @@ class AuthServiceTest {
     }
 
     @Test
+    // Tests login when the user is inactive.
     void login_InactiveUser() {
         User.setActive(false);
         AuthRequest request = new AuthRequest();

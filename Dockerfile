@@ -10,6 +10,8 @@ FROM maven:3.9.6-amazoncorretto-17 AS dev
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
+EXPOSE 8080
+ENTRYPOINT ["mvn", "spring-boot:run"]
 
 # Final stage for production
 FROM amazoncorretto:17-alpine

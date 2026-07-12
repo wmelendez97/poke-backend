@@ -19,6 +19,7 @@ public class PokeApiClient {
     private final RestTemplate pokeApiRestTemplate;
     private final PokeApiPokemonAdapter adapter;
 
+    // Constructor for PokeApiClient, injecting RestTemplate and PokeApiPokemonAdapter.
     public PokeApiClient(@Qualifier("pokeApiRestTemplate") RestTemplate pokeApiRestTemplate,
                            PokeApiPokemonAdapter adapter) {
         this.pokeApiRestTemplate = pokeApiRestTemplate;
@@ -51,6 +52,10 @@ public class PokeApiClient {
             return Collections.emptyList();
         }
         return adapter.toPokemonResponseList(dto.getResults().stream().filter(Objects::nonNull).toList());
+    }
+
+    public PokeApiPokemonDto getPokemonPage(int limit, int offset) {
+        return pokeApiRestTemplate.getForObject("/pokemon?limit=" + limit + "&offset=" + offset, PokeApiPokemonDto.class);
     }
 
     // Retrieves a list of all types from the external API.

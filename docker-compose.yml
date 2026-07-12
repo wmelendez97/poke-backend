@@ -14,7 +14,9 @@ services:
       - poke-network
 
   api:
-    build: .
+    build:
+      context: .
+      target: dev
     container_name: poke-backend
     ports:
       - "8080:8080"
@@ -22,6 +24,9 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/poke_db
       SPRING_DATASOURCE_USERNAME: poke
       SPRING_DATASOURCE_PASSWORD: poke
+    volumes:
+      - ./src:/app/src
+      - ./pom.xml:/app/pom.xml
     depends_on:
       - db
     networks:

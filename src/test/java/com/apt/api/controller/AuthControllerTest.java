@@ -35,6 +35,7 @@ class AuthControllerTest {
     private UserResponse UserResponse;
 
     @BeforeEach
+    // Sets up the test environment before each test method.
     void setUp() {
         authRequest = new AuthRequest();
         authRequest.setEmail("test@example.com");
@@ -49,6 +50,7 @@ class AuthControllerTest {
     }
 
     @Test
+    // Tests successful user login via the controller.
     void login_Success() {
         when(authService.login(authRequest)).thenReturn(authResponse);
 
@@ -59,6 +61,7 @@ class AuthControllerTest {
     }
 
     @Test
+    // Tests failed user login via the controller.
     void login_Failure() {
         when(authService.login(authRequest)).thenReturn(null);
 
@@ -68,6 +71,7 @@ class AuthControllerTest {
     }
 
     @Test
+    // Tests successful retrieval of authenticated user information.
     void me_Success() {
         when(httpRequest.getAttribute("authenticatedUser")).thenReturn("test@example.com");
         when(authService.getUserByEmail("test@example.com")).thenReturn(UserResponse);
@@ -79,6 +83,7 @@ class AuthControllerTest {
     }
 
     @Test
+    // Tests retrieval of authenticated user information when user is not found.
     void me_NotFound() {
         when(httpRequest.getAttribute("authenticatedUser")).thenReturn("test@example.com");
         when(authService.getUserByEmail("test@example.com")).thenReturn(null);

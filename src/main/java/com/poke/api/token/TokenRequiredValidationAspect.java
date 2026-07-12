@@ -20,6 +20,7 @@ public class TokenRequiredValidationAspect {
 
 	private final JwtService jwtService;
 
+	// Constructor for TokenRequiredValidationAspect, injecting JwtService.
 	public TokenRequiredValidationAspect(JwtService jwtService) {
 		this.jwtService = jwtService;
 	}
