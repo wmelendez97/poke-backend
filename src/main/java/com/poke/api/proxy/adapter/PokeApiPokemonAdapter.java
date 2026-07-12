@@ -86,6 +86,17 @@ public class PokeApiPokemonAdapter {
                 .collect(Collectors.toList());
     }
 
+    // Converts a list of named resources into the compact type catalog response.
+    public List<TypeSummaryResponse> toTypeSummaryResponseList(List<PokeApiNamedResource> resources) {
+        return resources.stream()
+                .filter(Objects::nonNull)
+                .map(resource -> TypeSummaryResponse.builder()
+                        .id(extractIdFromUrl(resource.getUrl()))
+                        .name(resource.getName())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
     // Converts a PokeApiAbilityDto to an AbilityResponse.
     public AbilityResponse toAbilityResponse(PokeApiAbilityDto dto) {
         if (dto == null) {

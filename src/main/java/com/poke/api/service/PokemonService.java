@@ -57,7 +57,7 @@ public class PokemonService {
     @Transactional
     public PokemonResponse getPokemonByIdOrName(String idOrName, String username) {
         Optional<PokemonResponse> cachedPokemon = findCachedPokemon(idOrName);
-        if (cachedPokemon.isPresent()) {
+        if (cachedPokemon.isPresent() && isDetailComplete(cachedPokemon.get())) {
             return cachedPokemon.get();
         }
 
@@ -103,6 +103,18 @@ public class PokemonService {
                 .name(resource.getName())
                 .id(extractId(resource.getUrl()))
                 .build();
+    }
+
+    // Checks whether the cached Pokemon contains the full detail payload.
+    private boolean isDetailComplete(PokemonResponse response) {
+        return response != null
+                && response.getHeight() != null
+                && response.getWeight() != null
+                && response.getBaseExperience() != null
+                && response.getImageUrl() != null
+                && response.getTypes() != null
+                && response.getAbilities() != null
+                && response.getStats() != null;
     }
 
     // Extracts the numeric identifier from the URL.
