@@ -53,6 +53,7 @@ public class PokemonController {
             @RequestParam(defaultValue = "20") @Min(1) int limit,
             @RequestParam(defaultValue = "0") @Min(0) int offset) {
         String userIdentifier = getCurrentUserIdentifier();
+        String username = getCurrentUsername();
         String endpoint = request.getRequestURI();
         String queryValue = "limit=" + limit + "&offset=" + offset;
 
@@ -82,11 +83,12 @@ public class PokemonController {
     @Operation(summary = "Get Pokemon detail by ID or name", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<ApiResponse<PokemonResponse>> getPokemonByIdOrName(@PathVariable String idOrName) {
         String userIdentifier = getCurrentUserIdentifier();
+        String username = getCurrentUsername();
         String endpoint = request.getRequestURI();
         String queryValue = idOrName;
 
         try {
-            PokemonResponse data = pokemonService.getPokemonByIdOrName(idOrName);
+            PokemonResponse data = pokemonService.getPokemonByIdOrName(idOrName, username);
             searchHistoryService.saveSearchHistory(userIdentifier, "detail", queryValue, endpoint, true, HttpStatus.OK.value(), null);
             return ResponseEntity.ok(new ApiResponse<>(data));
         } catch (ResourceAccessException ex) {
@@ -105,11 +107,50 @@ public class PokemonController {
         }
     }
 
+    // Searches Pokemon by exact or partial name.
+    @GetMapping("/search")
+    @TokenRequired
+    @Operation(summary = "Search Pokemon by exact or partial name", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<ApiResponse<List<PokemonResponse>>> searchPokemonByName(@RequestParam String name) {
+        String userIdentifier = getCurrentUserIdentifier();
+        String username = getCurrentUsername();
+        String endpoint = request.getRequestURI();
+        String queryValue = name;
+
+        try {
+            List<PokemonResponse> data = pokemonService.searchPokemonByName(name, username);
+            searchHistoryService.saveSearchHistory(userIdentifier, "search", queryValue, endpoint, true, HttpStatus.OK.value(), null);
+            return ResponseEntity.ok(new ApiResponse<>(data));
+        } catch (ResourceAccessException ex) {
+            searchHistoryService.saveSearchHistory(userIdentifier, "search", queryValue, endpoint, false, HttpStatus.GATEWAY_TIMEOUT.value(), ex.getMessage());
+            return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT)
+                    .body(new ApiResponse<>(ApiMessages.ERROR_EXTERNAL_SERVICE_TIMEOUT.getMessage(),
+                            List.of(ApiError.ErrorCodes.EXTERNAL_SERVICE_TIMEOUT), HttpStatus.GATEWAY_TIMEOUT));
+        } catch (RestClientException ex) {
+            searchHistoryService.saveSearchHistory(userIdentifier, "search", queryValue, endpoint, false, HttpStatus.BAD_GATEWAY.value(), ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body(new ApiResponse<>(ApiMessages.ERROR_EXTERNAL_SERVICE.getMessage(),
+                            List.of(ApiError.ErrorCodes.EXTERNAL_SERVICE_ERROR), HttpStatus.BAD_GATEWAY));
+        } catch (Exception ex) {
+            searchHistoryService.saveSearchHistory(userIdentifier, "search", queryValue, endpoint, false, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+            throw ex;
+        }
+    }
+
     // Retrieves the current user's identifier.
     private String getCurrentUserIdentifier() {
-        Long authenticatedUserId = (Long) request.getAttribute("authenticatedUserId");
+        Object authenticatedUserId = request.getAttribute("authenticatedUserId");
         if (authenticatedUserId != null) {
-            return authenticatedUserId.toString();
+            return String.valueOf(authenticatedUserId);
+        }
+        return "anonymous";
+    }
+
+    // Returns the current user's username for audit fields and cache writes.
+    private String getCurrentUsername() {
+        String authenticatedUserUsername = (String) request.getAttribute("authenticatedUserUsername");
+        if (authenticatedUserUsername != null && !authenticatedUserUsername.isBlank()) {
+            return authenticatedUserUsername;
         }
         return "anonymous";
     }

@@ -41,6 +41,7 @@ class AuthServiceTest {
         passwordEncoder = new BCryptPasswordEncoder();
         User = new User();
         User.setId(1L);
+        User.setUsername("testuser");
         User.setName("Test User");
         User.setEmail("test@example.com");
         User.setPassword(passwordEncoder.encode("password123"));
@@ -55,7 +56,7 @@ class AuthServiceTest {
         request.setPassword("password123");
 
         when(UserRepository.findByEmail("test@example.com")).thenReturn(Optional.of(User));
-        when(jwtService.generateToken(anyLong(), anyString(), anyString(), anyString())).thenReturn("mock-token");
+        when(jwtService.generateToken(1L, "testuser", "test@example.com", "Test User")).thenReturn("mock-token");
 
         AuthResponse response = authService.login(request);
 

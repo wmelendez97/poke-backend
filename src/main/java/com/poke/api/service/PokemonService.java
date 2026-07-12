@@ -55,7 +55,7 @@ public class PokemonService {
 
     // Returns the Pokemon detail by id or name.
     @Transactional
-    public PokemonResponse getPokemonByIdOrName(String idOrName) {
+    public PokemonResponse getPokemonByIdOrName(String idOrName, String username) {
         Optional<PokemonResponse> cachedPokemon = findCachedPokemon(idOrName);
         if (cachedPokemon.isPresent()) {
             return cachedPokemon.get();
@@ -63,9 +63,38 @@ public class PokemonService {
 
         PokemonResponse response = pokeApiClient.getProductByIdOrName(idOrName);
         if (response != null) {
-            pokemonRepository.save(cachePokemon(response));
+            pokemonRepository.save(cachePokemon(response, username));
         }
         return response;
+    }
+
+    // Searches Pokemon by exact or partial name using cached data first.
+    @Transactional(readOnly = true)
+    public List<PokemonResponse> searchPokemonByName(String name, String username) {
+        if (name == null || name.isBlank()) {
+            return List.of();
+        }
+
+        Optional<PokemonResponse> exactMatch = findCachedPokemon(name);
+        if (exactMatch.isPresent()) {
+            return List.of(exactMatch.get());
+        }
+
+        List<Pokemon> cachedPokemon = pokemonRepository.findByNameContainingIgnoreCase(name.trim());
+        if (!cachedPokemon.isEmpty()) {
+            return cachedPokemon.stream()
+                    .map(this::toResponse)
+                    .flatMap(Optional::stream)
+                    .toList();
+        }
+
+        PokemonResponse response = pokeApiClient.getProductByIdOrName(name.trim());
+        if (response == null) {
+            return List.of();
+        }
+
+        pokemonRepository.save(cachePokemon(response, username));
+        return List.of(response);
     }
 
     // Maps a basic PokeAPI resource into the internal response.
@@ -122,7 +151,7 @@ public class PokemonService {
     }
 
     // Converts the public response into a cache entity.
-    private Pokemon cachePokemon(PokemonResponse response) {
+    private Pokemon cachePokemon(PokemonResponse response, String username) {
         try {
             return Pokemon.builder()
                     .pokemonId(response.getId())
@@ -133,11 +162,20 @@ public class PokemonService {
                     .imageUrl(response.getImageUrl())
                     .rawJson(objectMapper.writeValueAsString(response))
                     .active(true)
-                    .createdBy("system")
-                    .updatedBy("system")
+                    .createdBy(username)
+                    .updatedBy(username)
                     .build();
         } catch (Exception ex) {
             throw new IllegalStateException("Unable to cache Pokemon detail", ex);
+        }
+    }
+
+    // Rebuilds a public response from a cached Pokemon entity.
+    private Optional<PokemonResponse> toResponse(Pokemon pokemon) {
+        try {
+            return Optional.of(objectMapper.readValue(pokemon.getRawJson(), PokemonResponse.class));
+        } catch (Exception ex) {
+            return Optional.empty();
         }
     }
 }

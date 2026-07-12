@@ -88,7 +88,7 @@ class PokemonServiceTest {
 
         when(pokemonRepository.findById(25L)).thenReturn(Optional.of(cachedPokemon));
 
-        var response = createService().getPokemonByIdOrName("25");
+        var response = createService().getPokemonByIdOrName("25", "testuser");
 
         assertNotNull(response);
         assertEquals(25L, response.getId());
@@ -111,7 +111,7 @@ class PokemonServiceTest {
 
         when(pokeApiClient.getProductByIdOrName("pikachu")).thenReturn(pokemon);
 
-        var response = createService().getPokemonByIdOrName("pikachu");
+        var response = createService().getPokemonByIdOrName("pikachu", "testuser");
 
         assertNotNull(response);
         assertEquals(25L, response.getId());
