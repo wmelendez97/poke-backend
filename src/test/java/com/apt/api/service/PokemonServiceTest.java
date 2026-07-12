@@ -2,6 +2,7 @@ package com.poke.api.service;
 
 import com.poke.api.dto.external.PokeApiNamedResource;
 import com.poke.api.dto.external.PokeApiPokemonDto;
+import com.poke.api.dto.response.PokemonResponse;
 import com.poke.api.proxy.client.PokeApiClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,5 +48,29 @@ class PokemonServiceTest {
         assertEquals(68, response.getTotalPages());
         assertEquals(1, response.getNumberOfElements());
         assertEquals(20, response.getSize());
+    }
+
+    @Test
+    // Verifies the service returns the mapped Pokemon detail.
+    void getPokemonByIdOrName_ReturnsDetail() {
+        PokemonResponse pokemon = PokemonResponse.builder()
+                .id(25L)
+                .name("pikachu")
+                .height(4)
+                .weight(60)
+                .baseExperience(112)
+                .imageUrl("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png")
+                .build();
+
+        when(pokeApiClient.getProductByIdOrName("pikachu")).thenReturn(pokemon);
+
+        var response = pokemonService.getPokemonByIdOrName("pikachu");
+
+        assertNotNull(response);
+        assertEquals(25L, response.getId());
+        assertEquals("pikachu", response.getName());
+        assertEquals(4, response.getHeight());
+        assertEquals(60, response.getWeight());
+        assertEquals(112, response.getBaseExperience());
     }
 }

@@ -81,6 +81,7 @@ public class ApiResponse<T> {
 		String simpleName = caller.getClassName().substring(caller.getClassName().lastIndexOf('.') + 1);
 		String method = caller.getMethodName();
 		String txId = MDC.get("txId");
+		String separator = String.format("--------------------------------[%s]---------------------------------", txId);
 		String payload;
 		try {
 			payload = mapper.writeValueAsString(data);
@@ -89,16 +90,20 @@ public class ApiResponse<T> {
 			payload = String.valueOf(data);
 		}
 		if (success) {
+			log.info(separator);
 			log.info("{} {}.{} - Status: {} {} - x-transaction-id: {}", action, simpleName, method, status.value(),
 					status.getReasonPhrase(), txId);
 			log.info("Payload: {}", payload);
+			log.info(separator);
 		} else {
+			log.error(separator);
 			log.error("{} {}.{} - Status: {} {} - Message: {} - x-transaction-id: {}", action, simpleName, method,
 					status.value(), status.getReasonPhrase(), message, txId);
 			log.error("Payload: {}", payload);
 			if (errors != null && !errors.isEmpty()) {
 				errors.forEach(err -> log.error("[{}] {}", err.getCode(), err.getDetail()));
 			}
+			log.error(separator);
 		}
 	}
 

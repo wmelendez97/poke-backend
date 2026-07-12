@@ -4,6 +4,7 @@ import com.poke.api.dto.external.PokeApiNamedResource;
 import com.poke.api.dto.external.PokeApiPokemonDto;
 import com.poke.api.dto.response.PokemonPageItemResponse;
 import com.poke.api.dto.response.PokemonPageResponse;
+import com.poke.api.dto.response.PokemonResponse;
 import com.poke.api.proxy.client.PokeApiClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,11 @@ public class PokemonService {
                 .numberOfElements(numberOfElements)
                 .size(limit)
                 .build();
+    }
+
+    // Returns the Pokemon detail by id or name.
+    public PokemonResponse getPokemonByIdOrName(String idOrName) {
+        return pokeApiClient.getProductByIdOrName(idOrName);
     }
 
     // Maps a basic PokeAPI resource into the internal response.
