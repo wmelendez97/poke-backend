@@ -77,7 +77,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 
 ## Endpoints disponibles 🌐
 
-*   **Documentación de pruebas y Colección JSON**: `[docs/](docs/)`
+*   **Documentación de pruebas y Colección JSON**: [docs/](docs/)
 *   **Swagger UI**: `http://localhost:8080/api/swagger-ui/index.html`
 *   **OpenAPI Docs**: `http://localhost:8080/v3/api-docs`
 *   **Actuator**: `http://localhost:8080/actuator`
