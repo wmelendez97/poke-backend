@@ -22,9 +22,9 @@ import java.util.Collections;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="\"user\"")
+@Table(name="\"app_user\"")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@SQLDelete(sql = "UPDATE \"user\" SET deleted_at = CURRENT_TIMESTAMP, deleted_by = CURRENT_USER WHERE id=?") // Coment: Define la consulta SQL para el borrado lógico
+@SQLDelete(sql = "UPDATE \"app_user\" SET deleted_at = CURRENT_TIMESTAMP, deleted_by = CURRENT_USER WHERE id=?")
 @Where(clause = "deleted_at IS NULL")
 public class User implements UserDetails {
 
@@ -37,7 +37,6 @@ public class User implements UserDetails {
     String name;
     boolean active;
 
-    // Coment: Campos para soft delete
     @CreationTimestamp
     @Column(name = "created_at")
     LocalDateTime createdAt;

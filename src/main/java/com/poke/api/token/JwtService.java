@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.function.Function;
+import java.util.Map;
 
 import javax.crypto.SecretKey;
 
@@ -71,11 +72,18 @@ public class JwtService {
 	}
 
 	// Generates JWT for authenticated user
-	public String generateToken(String user) {
+	public String generateToken(Long id, String username, String email, String name) {
 		Date now = new Date();
 		Date expirationDate = new Date(now.getTime() + expirationTime);
 
-		return Jwts.builder().setSubject(user).setIssuedAt(now).setExpiration(expirationDate)
+		return Jwts.builder()
+				.setSubject(email)
+				.addClaims(Map.of(
+						"id", id,
+						"username", username,
+						"email", email,
+						"name", name))
+				.setIssuedAt(now).setExpiration(expirationDate)
 				.signWith(getSigningKey()).compact();
 	}
 }

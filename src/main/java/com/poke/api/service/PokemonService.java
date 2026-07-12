@@ -6,9 +6,14 @@ import com.poke.api.dto.response.PokemonPageItemResponse;
 import com.poke.api.dto.response.PokemonPageResponse;
 import com.poke.api.dto.response.PokemonResponse;
 import com.poke.api.proxy.client.PokeApiClient;
+import com.poke.api.model.Pokemon;
+import com.poke.api.repository.PokemonRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.net.URI;
 import java.util.List;
 
@@ -16,10 +21,16 @@ import java.util.List;
 public class PokemonService {
 
     private final PokeApiClient pokeApiClient;
+    private final PokemonRepository pokemonRepository;
+    private final ObjectMapper objectMapper;
 
     // Injects the PokeAPI client for page queries.
-    public PokemonService(@Qualifier("pokeApiRestClient") PokeApiClient pokeApiClient) {
+    public PokemonService(@Qualifier("pokeApiRestClient") PokeApiClient pokeApiClient,
+                          PokemonRepository pokemonRepository,
+                          ObjectMapper objectMapper) {
         this.pokeApiClient = pokeApiClient;
+        this.pokemonRepository = pokemonRepository;
+        this.objectMapper = objectMapper;
     }
 
     // Converts the external response into the public contract.
@@ -43,8 +54,18 @@ public class PokemonService {
     }
 
     // Returns the Pokemon detail by id or name.
+    @Transactional
     public PokemonResponse getPokemonByIdOrName(String idOrName) {
-        return pokeApiClient.getProductByIdOrName(idOrName);
+        Optional<PokemonResponse> cachedPokemon = findCachedPokemon(idOrName);
+        if (cachedPokemon.isPresent()) {
+            return cachedPokemon.get();
+        }
+
+        PokemonResponse response = pokeApiClient.getProductByIdOrName(idOrName);
+        if (response != null) {
+            pokemonRepository.save(cachePokemon(response));
+        }
+        return response;
     }
 
     // Maps a basic PokeAPI resource into the internal response.
@@ -72,5 +93,51 @@ public class PokemonService {
             }
         }
         return null;
+    }
+
+    // Looks up a cached Pokemon and rebuilds the public response.
+    private Optional<PokemonResponse> findCachedPokemon(String idOrName) {
+        Optional<Pokemon> cachedPokemon = resolveCachedPokemon(idOrName);
+        if (cachedPokemon.isEmpty()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(objectMapper.readValue(cachedPokemon.get().getRawJson(), PokemonResponse.class));
+        } catch (Exception ignored) {
+            return Optional.empty();
+        }
+    }
+
+    // Resolves the cached Pokemon by numeric id or name.
+    private Optional<Pokemon> resolveCachedPokemon(String idOrName) {
+        if (idOrName == null || idOrName.isBlank()) {
+            return Optional.empty();
+        }
+        try {
+            Long pokemonId = Long.valueOf(idOrName.trim());
+            return pokemonRepository.findById(pokemonId);
+        } catch (NumberFormatException ignored) {
+            return pokemonRepository.findByNameIgnoreCase(idOrName.trim());
+        }
+    }
+
+    // Converts the public response into a cache entity.
+    private Pokemon cachePokemon(PokemonResponse response) {
+        try {
+            return Pokemon.builder()
+                    .pokemonId(response.getId())
+                    .name(response.getName())
+                    .height(response.getHeight())
+                    .weight(response.getWeight())
+                    .baseExperience(response.getBaseExperience())
+                    .imageUrl(response.getImageUrl())
+                    .rawJson(objectMapper.writeValueAsString(response))
+                    .active(true)
+                    .createdBy("system")
+                    .updatedBy("system")
+                    .build();
+        } catch (Exception ex) {
+            throw new IllegalStateException("Unable to cache Pokemon detail", ex);
+        }
     }
 }

@@ -73,10 +73,11 @@ class AuthControllerTest {
     @Test
     // Tests successful retrieval of authenticated user information.
     void me_Success() {
-        when(httpRequest.getAttribute("authenticatedUser")).thenReturn("test@example.com");
+        when(httpRequest.getAttribute("authenticatedUserId")).thenReturn(1L);
+        when(httpRequest.getAttribute("authenticatedUserEmail")).thenReturn("test@example.com");
         when(authService.getUserByEmail("test@example.com")).thenReturn(UserResponse);
 
-        ResponseEntity response = authController.me(httpRequest);
+        ResponseEntity response = authController.me();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -85,10 +86,11 @@ class AuthControllerTest {
     @Test
     // Tests retrieval of authenticated user information when user is not found.
     void me_NotFound() {
-        when(httpRequest.getAttribute("authenticatedUser")).thenReturn("test@example.com");
+        when(httpRequest.getAttribute("authenticatedUserId")).thenReturn(1L);
+        when(httpRequest.getAttribute("authenticatedUserEmail")).thenReturn("test@example.com");
         when(authService.getUserByEmail("test@example.com")).thenReturn(null);
 
-        ResponseEntity response = authController.me(httpRequest);
+        ResponseEntity response = authController.me();
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }

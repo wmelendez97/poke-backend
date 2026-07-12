@@ -18,23 +18,23 @@ public class AuthService {
     private final JwtService jwtService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // Authenticates user and generates JWT token
-    public AuthResponse login(AuthRequest request) {
-        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
+	// Authenticates user and generates JWT token
+	public AuthResponse login(AuthRequest request) {
+		User user = userRepository.findByEmail(request.getEmail()).orElse(null);
 
         if (user == null || !user.isActive()) {
             return null;
         }
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return null;
-        }
+		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+			return null;
+		}
 
-        String token = jwtService.generateToken(user.getEmail());
-        UserResponse userResponse = mapToResponse(user);
+		String token = jwtService.generateToken(user.getId(), user.getUsername(), user.getEmail(), user.getName());
+		UserResponse userResponse = mapToResponse(user);
 
-        return new AuthResponse(token, userResponse);
-    }
+		return new AuthResponse(token, userResponse);
+	}
 
     // Gets user by email
     public UserResponse getUserByEmail(String email) {
