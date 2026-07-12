@@ -42,10 +42,12 @@ Esto levantará:
 -   **API**: `http://localhost:8080`
 -   **PostgreSQL**: `localhost:5432`
 
-### Con ASDF (Local) 💻
+### Con ASDF (Local con wsl) 💻
 
 1.  Asegúrate de tener las versiones correctas de Java y Maven instaladas con ASDF:
     ```bash
+    asdf plugin add java
+    asdf plugin add maven
     asdf install
     ```
 2.  Ejecuta los tests:
