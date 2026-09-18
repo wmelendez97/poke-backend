@@ -1,6 +1,16 @@
-# Poke Backend 🐉
+﻿# Poke Backend 🐉
 
 _Este proyecto es un backend que se conecta a la PokeAPI._
+
+---
+
+## Repositorio
+
+[https://github.com/wmelendez97/poke-backend](https://github.com/wmelendez97/poke-backend)
+
+## Frontend del proyecto
+
+[https://github.com/wmelendez97/poke-frontend](https://github.com/wmelendez97/poke-frontend)
 
 ---
 
