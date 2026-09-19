@@ -92,6 +92,7 @@ jwt.secret=KeyDefinitionForJWTVeryLongInOrderToProgressWithTheTechnicalTest2026
 ## Endpoints disponibles 🌐
 
 *   **Documentación de pruebas y Colección JSON**: [docs/](docs/)
+*   **Guía de desarrollo backend**: [docs/desarrollo-backend.md](docs/desarrollo-backend.md)
 *   **Swagger UI**: `http://localhost:8080/api/swagger-ui/index.html`
 *   **OpenAPI Docs**: `http://localhost:8080/v3/api-docs`
 *   **Actuator**: `http://localhost:8080/actuator`

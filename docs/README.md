@@ -1,4 +1,4 @@
-# Documentación
+﻿# Documentación
 
 ## Uso
 
@@ -9,6 +9,9 @@
 5. A partir de ahí, el resto de requests usa ese token de forma automática.
 
 ## Recursos
+
+### Desarrollo
+- [Guía de desarrollo backend](desarrollo-backend.md)
 
 ### Auth
 - `POST http://localhost:8080/api/auth/login`
@@ -49,3 +52,4 @@ Para mayor detalle, revisa [Swagger UI](http://localhost:8080/api/swagger-ui/ind
 ![](screenshots/actuator.png)
 ![](screenshots/search_history.png)
 ![](screenshots/postman.png)
+
